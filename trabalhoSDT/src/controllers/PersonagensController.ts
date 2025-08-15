@@ -17,12 +17,28 @@ export class PersonagensController {
 
      async list(req: Request, res: Response): Promise<Response> {
         try{
-            await connection.query("SELECT * FROM  personagens");
-            return res.status(200).json({mensagem: "personagens listados com sucesso!"});
+            const [rows] = await connection.query("SELECT * FROM  personagens");
+            return res.status(200).json({mensagem: "personagens listados com sucesso!", nome: [rows]});
         }
         catch(erro){
             console.log("erro ao listar personagens: "+ erro);
+            console.log(req.body)
             return res.status(500).json({mensagem: "houve um erro interno"});
+        }
+     }
+
+     async getbyId(req: Request, res:Response): Promise<Response> {
+        try{
+            const {id} = req.params
+            const [rows]: any[] = await connection.query("SELECT * FROM  personagens WHERE id = ?", [id]);
+            if (rows.length === 0) {
+                  return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
+                 }
+            return res.status(200).json({mensagem: "personagem listado", rows})
+        }
+        catch(erro){
+            console.log(erro)
+            return res.status(500).json({mensagem: "Houve um erro interno"})
         }
      }
 
@@ -41,15 +57,14 @@ export class PersonagensController {
 
      async delete(req: Request, res: Response): Promise<Response> {
         try{
-            // const id: number = Number(req.params.id);
-            const id: Number = req.body
-            await connection.query("DELETE  FROM personagens WHERE id = ? ", [id]);
-         return res.status(200).json({mensagem: "Personagem deletado com sucesso!"})
+            const {id}= req.params;
+            //const id: number = req.body
+            await connection.query("DELETE FROM personagens WHERE id = ?", [id]);
+         return res.status(201).json()
         }
         catch(erro) {
             console.log("Erro ao deletar personagem: "+ erro);
             return res.status(500).json({mensagem: "Houve um erro interno"});
-            
         }
      }
 }
