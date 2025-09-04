@@ -2,8 +2,8 @@ document.getElementById("formCadastro").addEventListener("submit", async functio
     event.preventDefault();
 
     const token = localStorage.getItem("token");
-    const name = document.getElementById("nome").value;
-    const email = document.getElementById("email").value;
+    const name = document.getElementById("nome").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("senha").value;
 
     const userDados = {}
@@ -31,7 +31,7 @@ document.getElementById("formCadastro").addEventListener("submit", async functio
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + token
             },
-            body: JSON.stringify(name, email, password)
+            body: JSON.stringify(userDados)
         });
 
         if (!resposta.ok) {
